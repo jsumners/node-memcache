@@ -1,0 +1,35 @@
+{
+  "name": "@jsumners/memcache",
+  "version": "1.0.0",
+  "description": "A very simple Catbox-like memory cache",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap 'test/**/*.test.js'",
+    "lint": "standard | snazzy"
+  },
+  "precommit": [
+    "lint",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jsumners/node-memcache.git"
+  },
+  "keywords": [
+    "node",
+    "cache",
+    "catbox"
+  ],
+  "author": "James Sumners <james.sumners@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsumners/node-memcache/issues"
+  },
+  "homepage": "https://github.com/jsumners/node-memcache#readme",
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.3",
+    "tap": "^10.7.2"
+  }
+}
