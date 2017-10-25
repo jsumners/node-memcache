@@ -1,6 +1,6 @@
 {
   "name": "@jsumners/memcache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A very simple Catbox-like memory cache",
   "main": "index.js",
   "scripts": {
