@@ -1,10 +1,10 @@
 # @jsumners/memcache
 
 This module implements a very simple memory cache that adheres to the core
-of the [Catbox][catbox] protocol. Specifically, it implements the `get`, `drop`,
+of the [Catbox (v7)][catbox] protocol. Specifically, it implements the `get`, `drop`,
 and `set` methods of the Catbox protocol.
 
-[catbox]: https://www.npmjs.com/package/catbox
+[catbox]: https://github.com/hapijs/catbox/tree/v7.1.5
 
 ## Example
 
