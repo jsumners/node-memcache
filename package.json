@@ -31,5 +31,8 @@
     "snazzy": "^7.0.0",
     "standard": "^10.0.3",
     "tap": "^10.7.2"
+  },
+  "dependencies": {
+    "lru_map": "^0.3.3"
   }
 }

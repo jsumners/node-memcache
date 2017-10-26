@@ -4,6 +4,15 @@ This module implements a very simple memory cache that adheres to the core
 of the [Catbox (v7)][catbox] protocol. Specifically, it implements the `get`, `drop`,
 and `set` methods of the Catbox protocol.
 
+**Caveat:** the storage mechanism is a least recently used cache. So, while
+the API uses a time to live mechanic, the maximum number of items in the cache
+is capped (default: 100,000). Thus, an item may be removed from the cache
+prior to its maximum TTL.
+
+**Important:** this is not meant to be used in a "production" environemnt. It
+is meant to fill gaps in testing and/or for a quick way to get started using a
+cache that adheres the to protocol.
+
 [catbox]: https://github.com/hapijs/catbox/tree/v7.1.5
 
 ## Example
@@ -30,14 +39,14 @@ cache.get('foo', (err, cached) => {
 
 ## API
 
-### cacheFactory(interval)
+### cacheFactory(maxItems)
 
 Constructor function that is the main export of the module. It will return
 a Catbox compliant cache object.
 
-+ `interval` (Default: `1000`): sets a time, in millisecons, that a watcher
-function will use to check the cache for expired items and purge them. If the
-value is `-1` then the watcher will be disabled.
++ `maxItems` (Default: `100000`): sets the maximum number of items that can be
+stored in the cache at a given time. Once the limit is reached, the least most
+recently used item will be purged to make room for a new item being added.
 
 #### cache.drop(key, callback)
 

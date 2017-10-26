@@ -1,19 +1,21 @@
 'use strict'
 
+const LMap = require('lru_map').LRUMap
+
 const cacheProto = {
   drop: function (key, callback) {
-    this._cache[key] = undefined
+    this._cache.delete(key)
     callback(null)
   },
 
   get: function (key, callback) {
-    const obj = this._cache[key]
+    const obj = this._cache.get(key)
     if (!obj) return callback(null, null)
     const now = Date.now()
     const expires = obj.ttl + obj.stored
     const ttl = expires - now
     if (ttl < 0) {
-      this._cache[key] = undefined
+      this._cache.delete(key)
       return callback(null, null)
     }
     callback(null, {
@@ -24,41 +26,26 @@ const cacheProto = {
   },
 
   keys: function () {
-    return Object.keys(this._cache)
+    return this._cache.keys()
   },
 
   set: function (key, value, ttl, callback) {
-    this._cache[key] = {
+    this._cache.set(key, {
       ttl: ttl,
       item: value,
       stored: Date.now()
-    }
+    })
     callback(null)
   }
 }
 
-Object.defineProperty(cacheProto, '_cache', {
-  enumerable: false,
-  value: {}
-})
-
-module.exports = function (interval) {
+module.exports = function (maxItems) {
+  const _maxItems = (maxItems && Number.isInteger(maxItems)) ? maxItems : 100000
+  const map = new LMap(_maxItems)
   const cache = Object.create(cacheProto)
-
-  if (interval !== -1) {
-    const watcher = setInterval(() => {
-      const now = Date.now()
-      const keys = cache.keys()
-      for (const key of keys) {
-        if (!cache._cache[key]) continue
-        const ttl = cache._cache[key].ttl
-        const stored = cache._cache[key].stored
-        const expires = ttl + stored
-        if ((expires - now) < 0) cache._cache[key] = undefined
-      }
-    }, interval || 1000)
-    watcher.unref()
-  }
-
+  Object.defineProperty(cache, '_cache', {
+    enumerable: false,
+    value: map
+  })
   return cache
 }
