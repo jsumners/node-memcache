@@ -42,7 +42,7 @@ cache.get('foo', (err, cached) => {
 Every instance of `key` may be a simple string or a Catbox client compliant
 object, e.g. `{id: 'foo', segment: 'bar'}`.
 
-### cacheFactory(maxItems)
+### cacheFactory(maxItems, segment)
 
 Constructor function that is the main export of the module. It will return
 a Catbox compliant cache object.
@@ -50,6 +50,8 @@ a Catbox compliant cache object.
 + `maxItems` (Default: `100000`): sets the maximum number of items that can be
 stored in the cache at a given time. Once the limit is reached, the least most
 recently used item will be purged to make room for a new item being added.
++ `segment` (Default: `memcache`): sets the default segment to use when defining
+cache keys.
 
 #### cache.drop(key, callback)
 
@@ -78,7 +80,10 @@ Note: the cache expires items by simply setting the key to `undefined`. Thus,
 it is possible that a key may exist while the associated value does not.
 
 Returns: an `Array` of key identifiers. The keys will be as they have been
-mapped internally, e.g. `{id: 'foo', segment: 'bar'}` => `'bar:foo'`.
+mapped internally, e.g.
+
++ `{id: 'foo', segment: 'bar'}` => `'bar:foo'`
++ `'foo'` => `'memcache:foo'` (with default segment configured)
 
 #### cache.set(key, value, ttl, callback)
 

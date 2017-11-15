@@ -2,19 +2,19 @@
 
 const LMap = require('lru_map').LRUMap
 
-function mapKey (key) {
-  if (typeof key === 'string') return key
-  return `${key.segment || 'memcache'}:${key.id}`
+function mapKey (key, segment) {
+  if (typeof key === 'string') return `${segment}:${key}`
+  return `${key.segment || segment}:${key.id}`
 }
 
 const cacheProto = {
   drop: function (key, callback) {
-    this._cache.delete(mapKey(key))
+    this._cache.delete(mapKey(key, this._segment))
     callback(null)
   },
 
   get: function (key, callback) {
-    const _key = mapKey(key)
+    const _key = mapKey(key, this._segment)
     const obj = this._cache.get(_key)
     if (!obj) return callback(null, null)
     const now = Date.now()
@@ -36,7 +36,7 @@ const cacheProto = {
   },
 
   set: function (key, value, ttl, callback) {
-    this._cache.set(mapKey(key), {
+    this._cache.set(mapKey(key, this._segment), {
       ttl: ttl,
       item: value,
       stored: Date.now()
@@ -45,13 +45,24 @@ const cacheProto = {
   }
 }
 
-module.exports = function (maxItems) {
+module.exports = function (maxItems, segment) {
   const _maxItems = (maxItems && Number.isInteger(maxItems)) ? maxItems : 100000
   const map = new LMap(_maxItems)
   const cache = Object.create(cacheProto)
-  Object.defineProperty(cache, '_cache', {
-    enumerable: false,
-    value: map
+
+  const _segment = (typeof maxItems === 'string')
+    ? maxItems
+    : segment || 'memcache'
+
+  Object.defineProperties(cache, {
+    '_cache': {
+      enumerable: false,
+      value: map
+    },
+    '_segment': {
+      enumerable: false,
+      value: _segment
+    }
   })
   return cache
 }
