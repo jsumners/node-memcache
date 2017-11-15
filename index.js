@@ -2,20 +2,26 @@
 
 const LMap = require('lru_map').LRUMap
 
+function mapKey (key) {
+  if (typeof key === 'string') return key
+  return `${key.segment || 'memcache'}:${key.id}`
+}
+
 const cacheProto = {
   drop: function (key, callback) {
-    this._cache.delete(key)
+    this._cache.delete(mapKey(key))
     callback(null)
   },
 
   get: function (key, callback) {
-    const obj = this._cache.get(key)
+    const _key = mapKey(key)
+    const obj = this._cache.get(_key)
     if (!obj) return callback(null, null)
     const now = Date.now()
     const expires = obj.ttl + obj.stored
     const ttl = expires - now
     if (ttl < 0) {
-      this._cache.delete(key)
+      this._cache.delete(_key)
       return callback(null, null)
     }
     callback(null, {
@@ -30,7 +36,7 @@ const cacheProto = {
   },
 
   set: function (key, value, ttl, callback) {
-    this._cache.set(key, {
+    this._cache.set(mapKey(key), {
       ttl: ttl,
       item: value,
       stored: Date.now()

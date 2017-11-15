@@ -39,6 +39,9 @@ cache.get('foo', (err, cached) => {
 
 ## API
 
+Every instance of `key` may be a simple string or a Catbox client compliant
+object, e.g. `{id: 'foo', segment: 'bar'}`.
+
 ### cacheFactory(maxItems)
 
 Constructor function that is the main export of the module. It will return
@@ -74,7 +77,8 @@ Retrieve the list of identifiers for objects stored in the cache.
 Note: the cache expires items by simply setting the key to `undefined`. Thus,
 it is possible that a key may exist while the associated value does not.
 
-Returns: an `Array` of key identifiers.
+Returns: an `Array` of key identifiers. The keys will be as they have been
+mapped internally, e.g. `{id: 'foo', segment: 'bar'}` => `'bar:foo'`.
 
 #### cache.set(key, value, ttl, callback)
 
